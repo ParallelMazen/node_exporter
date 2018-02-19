@@ -22,12 +22,21 @@ import (
 	"os"
 	"strconv"
 	"strings"
+	"path"
 
 	"github.com/prometheus/client_golang/prometheus"
+	"gopkg.in/alecthomas/kingpin.v2"
+	"github.com/prometheus/common/log"
 )
 
 const (
 	netStatsSubsystem = "netstat"
+)
+
+var (
+	// The PID to collect netstat from
+	pid = kingpin.Flag("collector.netstat.pid", 
+		"PID to collect the netstat from, defaults to 'self'. Set it to 1 to get host netstat.").Default("self").String()
 )
 
 type netStatCollector struct{}
@@ -43,15 +52,23 @@ func NewNetStatCollector() (Collector, error) {
 }
 
 func (c *netStatCollector) Update(ch chan<- prometheus.Metric) error {
-	netStats, err := getNetStats(procFilePath("net/netstat"))
+	netstatPath := path.Join(*pid, "net/netstat")
+	//log.Infoln("Netstat path is - ", netstatPath)
+	netStats, err := getNetStats(procFilePath(netstatPath))
 	if err != nil {
 		return fmt.Errorf("couldn't get netstats: %s", err)
 	}
-	snmpStats, err := getNetStats(procFilePath("net/snmp"))
+
+	snmpstatPath := path.Join(*pid, "net/snmp")
+	//log.Infoln("SNMP path is - ", snmpstatPath)
+	snmpStats, err := getNetStats(procFilePath(snmpstatPath))
 	if err != nil {
-		return fmt.Errorf("couldn't get SNMP stats: %s", err)
+		return fmt.Errorf("cou--collector.netstat.pid=ldn't get SNMP stats: %s", err)
 	}
-	snmp6Stats, err := getSNMP6Stats(procFilePath("net/snmp6"))
+
+	snmp6statPath := path.Join(*pid, "net/snmp6")
+	//log.Infoln("SNMP6 path is - ", snmp6statPath)
+	snmp6Stats, err := getSNMP6Stats(procFilePath(snmp6statPath))
 	if err != nil {
 		return fmt.Errorf("couldn't get SNMP6 stats: %s", err)
 	}
