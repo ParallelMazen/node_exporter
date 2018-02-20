@@ -22,16 +22,27 @@ import (
 	"os"
 	"regexp"
 	"strings"
+	"path"
 
 	"github.com/prometheus/common/log"
+	"github.com/yookoala/realpath"
+	"gopkg.in/alecthomas/kingpin.v2"
 )
 
 var (
 	procNetDevFieldSep = regexp.MustCompile("[ :] *")
+
+	// The PID to collect net/dev from
+	netdevPid = kingpin.Flag("collector.netdev.pid",
+		"PID to collect the net/dev from, defaults to 'self'. Set it to 1 to get host net/dev.").Default("self").String()
 )
 
+
 func getNetDevStats(ignore *regexp.Regexp) (map[string]map[string]string, error) {
-	file, err := os.Open(procFilePath("net/dev"))
+   netdevPath := path.Join(*netdevPid, "net/dev")
+   myRealpath, err := realpath.Realpath(procFilePath(netdevPath))
+   log.Infoln("net/dev path is - ", myRealpath)
+	file, err := os.Open(myRealpath)
 	if err != nil {
 		return nil, err
 	}
