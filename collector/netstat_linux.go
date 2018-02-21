@@ -54,7 +54,7 @@ func NewNetStatCollector() (Collector, error) {
 
 func (c *netStatCollector) Update(ch chan<- prometheus.Metric) error {
 	netstatPath := path.Join(*pid, "net/netstat")
-   myRealpath, err := realpath.Realpath(procFilePath(netstatPath))
+	myRealpath, err := realpath.Realpath(procFilePath(netstatPath))
 	log.Infoln("Netstat path is - ", myRealpath,)
 	netStats, err := getNetStats(procFilePath(netstatPath))
 	if err != nil {
@@ -65,7 +65,7 @@ func (c *netStatCollector) Update(ch chan<- prometheus.Metric) error {
 	log.Infoln("SNMP path is - ", snmpstatPath)
 	snmpStats, err := getNetStats(procFilePath(snmpstatPath))
 	if err != nil {
-		return fmt.Errorf("cou--collector.netstat.pid=ldn't get SNMP stats: %s", err)
+		return fmt.Errorf("couldn't get SNMP stats: %s", err)
 	}
 
 	snmp6statPath := path.Join(*pid, "net/snmp6")
