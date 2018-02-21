@@ -39,9 +39,9 @@ var (
 
 
 func getNetDevStats(ignore *regexp.Regexp) (map[string]map[string]string, error) {
-   netdevPath := path.Join(*netdevPid, "net/dev")
-   myRealpath, err := realpath.Realpath(procFilePath(netdevPath))
-   log.Infoln("net/dev path is - ", myRealpath)
+	netdevPath := path.Join(*netdevPid, "net/dev")
+	myRealpath, err := realpath.Realpath(procFilePath(netdevPath))
+	log.Infoln("net/dev path is - ", myRealpath)
 	file, err := os.Open(myRealpath)
 	if err != nil {
 		return nil, err
